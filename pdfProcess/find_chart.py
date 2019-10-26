@@ -42,11 +42,11 @@ def ReadComponentImg(component_name,candidates_index):
     print("convert completed")
     candidates=[]
     for i in candidates_index:
-        candidates.append(cv2.imread(os.path.join(dir_path,str(i+1)+".png")))
+        candidates.append(cv2.imread(os.path.join(dir_path,str(i+1)+".jpg")))
 
     return (pin_img,candidates)
 if __name__=='__main__':
-    charts=choose_chart('ds093',range(0,18))
+    charts=choose_chart('TLK2711',range(0,25))
     for img in charts:
         img=cv2.resize(img,(1000,1000))
         cv2.imshow('',img)
