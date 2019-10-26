@@ -1,4 +1,5 @@
 import cv2
+import os
 import numpy as np
 import pytesseract
 from PIL import Image,ImageEnhance
@@ -36,9 +37,9 @@ def box_extraction(img,component_name):
 
         if(w>10 and h>10) and w>h:
             # cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
-            new_img=img[y:y+h,x:x+w],
-            cv2.imwrite(os.path.join("pdfProcess","tests",component_name,"tableSeg",str(i)+".jpg"),new_img)
-            text=totext(os.path.join("pdfProcess","tests",component_name,"tableSeg",str(i)+".jpg"))
+            new_img=img[y:y+h,x:x+w]
+            cv2.imwrite(os.path.join("pdfProcess","tests",component_name,"tableSeg",str(i+1)+".jpg"),new_img)
+            text=totext(os.path.join("pdfProcess","tests",component_name,"tableSeg",str(i+1)+".jpg"))
             textlist.append([(x,y),text])
     textlist=textlist[2:]
     out=open(os.path.join("pdfProcess","tests",component_name,"pinName.txt"),'w')

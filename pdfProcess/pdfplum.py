@@ -6,7 +6,7 @@ import cv2
 from skimage.measure import compare_ssim 
 from pdf2image import convert_from_path, convert_from_bytes
 
-def isChart(img,component):
+def isChart(img,component,component_name):
     ##constants
     convert_width=img.shape[1]
     convert_height=img.shape[0]
@@ -15,14 +15,13 @@ def isChart(img,component):
     threshold_chart_similarity=0.5
     threshold_component_similarity=0.7
     ##constants
-    chart_img=cv2.imread("chart.png")
+    chart_img=cv2.imread(os.path.join("pdfProcess","chart.jpg"))
     #conver images to gray for compare
     clone_gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     clone_gray_chart_img=cv2.cvtColor(cv2.resize(chart_img.copy(),(convert_width,convert_height)),cv2.COLOR_BGR2GRAY)
     clone_gray_component_img=cv2.cvtColor(cv2.resize(component.copy(),(convert_width,convert_height)),cv2.COLOR_BGR2GRAY)
     score1 = compare_ssim(clone_gray_chart_img,clone_gray_img,full=True)[0]
     score2 = compare_ssim(clone_gray_component_img,clone_gray_img,full=True)[0]
-    print(score1,score2)
     if score1>threshold_chart_similarity and score2<threshold_component_similarity:
         return True
     return False
@@ -83,9 +82,7 @@ def isContainTable(img):
 def textExtract(fname,textList):
     with plum.open(fname) as pdf:
         page_count = len(pdf.pages)
-        print(page_count)
         for page in pdf.pages:
-            print('--------------pg[%d]----------------' % page.page_number)
             textList.append(page.extract_text())
             #print(page.extract_text())
         return pdf.pages
@@ -101,22 +98,24 @@ def textExtract(fname,textList):
 
 
 def findUsefulPg(textList, pages, pinNameList,component_name):
-    component = cv2.imread(os.path.join("pdfProcess","tests",component_name,component_name+".png")
+    component = cv2.imread(os.path.join("pdfProcess","tests",component_name,component_name+".jpg"))
     frequency = [0]*len(pages)
     usefulPg = list()
-    for i,pg in enumerate(pages):
+    for i in range(len(pages)):
+        if not pages[i]:
+            continue
         isTable = False
         table_img_list = list()
         pgText = textList[i]
-        pgImg = cv2.imread(os.path.join("pdfProcess","tests",component_name,component_name,str(i+1)+".jpg")
+        pgImg = cv2.imread(os.path.join("pdfProcess","tests",component_name,component_name,str(i+1)+".jpg"))
         isTable, table_img_list = isContainTable(pgImg)
         for name in pinNameList:
             if name in pgText:
                 frequency[i]+=1
         if frequency[i]>0.3*len(pinNameList) and isTable :
-            usefulPg.append(pg)
+            usefulPg.append(pages[i])
             for j,tb in enumerate(table_img_list):
-                if isChart(tb, component):
+                if isChart(tb, component,component_name):
                     cv2.imwrite(os.path.join("pdfProcess","tests",component_name,"PinChart","p"+str(i+1)+"_"+str(j)+".jpg"),tb)
     return usefulPg
 
@@ -124,7 +123,7 @@ def readPinNameFile(fname):
     fin = open(fname, "r")
     pinNameList = list()
     for line in fname:
-        pinNameList.append(line)
+        pinNameList.append(line[line.find(")")+1:])
     return pinNameList
 if __name__=="__main__":
     textList = list()

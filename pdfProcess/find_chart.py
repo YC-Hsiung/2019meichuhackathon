@@ -1,6 +1,6 @@
 import cv2
 import os
-import pdf2jpg
+import pdfProcess.pdf2jpg
 from skimage.measure import compare_ssim
 """
 def choose_chart(componentname,candidates_index):
@@ -37,10 +37,10 @@ def choose_chart(componentname,candidates_index):
     return charts
 """
 def Convert2Jpg(component_name):
-    dir_path=os.path.join('tests',component_name,component_name)
-    pin_img=cv2.imread(dir_path+".png")
+    dir_path=os.path.join("pdfProcess",'tests',component_name,component_name)
+    pin_img=cv2.imread(dir_path+".jpg")
     print("converting to jpg...")
-    pg_number = pdf2jpg.pdf2jpg(dir_path+".pdf")
+    pg_number = pdfProcess.pdf2jpg(dir_path+".pdf")
     print("convert completed")
     return pin_img
 
