@@ -46,7 +46,7 @@ def ReadComponentImg(component_name,candidates_index):
 
     return (pin_img,candidates)
 if __name__=='__main__':
-    charts=choose_chart('ds093',range(0,18))
+    charts=choose_chart('42-45S83200G-16160G',range(0,63))
     for img in charts:
         img=cv2.resize(img,(1000,1000))
         cv2.imshow('',img)

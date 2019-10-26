@@ -27,25 +27,6 @@ def tableExtract(fname):
                 for row in pdf_table:
                     print([re.sub('\s+','',cell)if cell is not None else None for cell in row])
 
-def pdf2jpg(fname):
-    path = fname[:fname.find('.')]
-    exist = False
-    image = list()
-    if(not os.path.isdir(path)):
-        os.mkdir(path)
-        image = convert_from_path(fname, 900, fmt="PNG")
-    else:
-        dirs = os.listdir(path)
-        for fname in dirs:
-            image.append(Image.open(path+"/"+fname))
-        exist = True
-
-    for i,pg in enumerate(image):
-        if(not exist):
-            outfile = path + "/"+fname[:fname.find('.')] + "-" + str(i+1) + ".png"
-            pg.save(outfile, "PNG")
-        text = pyt.image_to_string(pg)
-        print(text)
 
 def findUsefulPg(textList, pages, pinName):
     frequency = [0]*len(pages)
