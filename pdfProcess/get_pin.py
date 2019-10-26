@@ -31,7 +31,7 @@ from utils import visualization_utils as vis_util
 
 # Name of the directory containing the object detection module we're using
 MODEL_NAME = 'inference_graph'
-IMAGE_NAME = os.path.join('images','train1.png')
+IMAGE_NAME = os.path.join('images','test3.png')
 
 # Grab path to current working directory
 CWD_PATH = os.getcwd()
@@ -109,7 +109,10 @@ cv2.waitKey(0)
 cv2.destroyAllWindows()
 
 import pytesseract
-tesseract_cmd = 'F:/Program Files/Tesseract-OCR/tesseract.exe'
 for i in range(0,int(num[0])):
     if scores[0][i]>0.6:
-        print(pytesseract.image_to_string(clone[int(boxes[0][i][1]*height):(int(boxes[0][i][3]*height)),int(boxes[0][i][0]*width):int(boxes[0][i][2]*width)]))
+        configure = "-psm 9"
+#        cv2.imshow("",clone[int(boxes[0][i][0]*width):(int(boxes[0][i][2]*width)),int(boxes[0][i][1]*height):int(boxes[0][i][3]*height)])
+#        cv2.waitKey(0)
+ #       cv2.destroyAllWindows()
+        print(pytesseract.image_to_string(clone[int(boxes[0][i][0]*width):(int(boxes[0][i][2]*width)),int(boxes[0][i][1]*height):int(boxes[0][i][3]*height)],config = configure ))

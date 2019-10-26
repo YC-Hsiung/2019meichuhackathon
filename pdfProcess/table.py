@@ -1,9 +1,10 @@
 import cv2
+import os
 import numpy as np
 import pytesseract
 from PIL import Image,ImageEnhance
 
-def box_extraction(img):
+def box_extraction(img,component_name):
     (thresh, img_bin) = cv2.threshold(img, 128, 255,cv2.THRESH_BINARY,cv2.THRESH_OTSU)
     img_bin=255-img_bin
 
@@ -37,16 +38,16 @@ def box_extraction(img):
         if(w>10 and h>10) and w>h:
             # cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
             new_img=img[y:y+h,x:x+w]
-            cv2.imwrite('./table_output/%s.jpg'%i,new_img)
-            text=totext('./table_output/%s.jpg'%i)
+            cv2.imwrite(os.path.join("pdfProcess","tests",component_name,"tableSeg",str(i+1)+".jpg"),new_img)
+            text=totext(os.path.join("pdfProcess","tests",component_name,"tableSeg",str(i+1)+".jpg"))
             textlist.append([(x,y),text])
     textlist=textlist[2:]
-    out=open('text.txt','w')
+    out=open(os.path.join("pdfProcess","tests",component_name,"pinName.txt"),'w')
     for item in textlist:
         out.write("(%s,%s) %s\n"%(item[0][0],item[0][1],item[1]))
-    print(textlist)
-    cv2.imshow('contour',img)
-    cv2.waitKey(0)
+    #print(textlist)
+    #cv2.imshow('contour',img)
+    #cv2.waitKey(0)
 
 
 def totext(filename):
@@ -58,10 +59,6 @@ def totext(filename):
     text=pytesseract.image_to_string(sharp_img,config="-c tessedit_char_whitelist=0123456789ABCDEFGHIJKLMNOPQRSTUVWXY(1)(2)(3)(4)(5)(6)(7)(8)(9)(0)/#*")
     return text
 if __name__=='__main__':
-    img = cv2.imread('./tests/ds093/ds093.png')
-    #img=cv2.imread('./problem/42-45S83200G-16160G/42-45S83200G-16160G.png')
-    # img = cv2.imread('./problem/66-67WVE2M16EALL-BLL-CLL/66-67WVE2M16EALL-BLL-CLL.png')
-    # img=cv2.imread('./problem/ads1298/ads1298.png')
-    # img=cv2.imread('./problem/TLK2711/TLK2711.png')
+    img = cv2.imread('./problem/ds093/ds093.png')
     box_extraction(img)
 
