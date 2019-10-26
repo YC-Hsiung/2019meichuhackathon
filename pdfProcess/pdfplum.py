@@ -1,9 +1,6 @@
 import pdfplumber as plum
 import numpy as np
-import pandas as pd
-import re
 import pytesseract as pyt
-from PIL import Image
 import os
 import cv2
 from skimage.measure import compare_ssim 
@@ -92,7 +89,6 @@ def textExtract(fname,textList):
             textList.append(page.extract_text())
             #print(page.extract_text())
         return pdf.pages
-def tableExtract(fname):
     with plum.open(fname) as pdf:
         page_count = len(pdf.pages)
         for page in pdf.pages:
@@ -103,37 +99,17 @@ def tableExtract(fname):
                 for row in pdf_table:
                     print([re.sub('\s+','',cell)if cell is not None else None for cell in row])
 
-def pdf2jpg(fname):
-    path = fname[:fname.find('.')]
-    exist = False
-    image = list()
-    if(not os.path.isdir(path)):
-        os.mkdir(path)
-        image = convert_from_path(fname, 900, fmt="PNG")
-    else:
-        dirs = os.listdir(path)
-        for fname in dirs:
-            image.append(Image.open(path+"/"+fname))
-        exist = True
 
-    for i,pg in enumerate(image):
-        if(not exist):
-            outfile = path + "/"+fname[:fname.find('.')] + "-" + str(i+1) + ".png"
-            pg.save(outfile, "PNG")
-        text = pyt.image_to_string(pg)
-        print(text)
-
-def findUsefulPg(textList, pages, pinNameList):
-    component = cv2.imread("./tests/ds093/ds093.png")
+def findUsefulPg(textList, pages, pinNameList,component_name):
+    component = cv2.imread(os.path.join("pdfProcess","tests",component_name,component_name+".png")
     frequency = [0]*len(pages)
     usefulPg = list()
     for i,pg in enumerate(pages):
         isTable = False
         table_img_list = list()
         pgText = textList[i]
-        pgImg = cv2.imread("tests/ds093/ds093/"+str(i+1)+".jpg")
+        pgImg = cv2.imread(os.path.join("pdfProcess","tests",component_name,component_name,str(i+1)+".jpg")
         isTable, table_img_list = isContainTable(pgImg)
-        print("Page:",i+1,isTable)
         for name in pinNameList:
             if name in pgText:
                 frequency[i]+=1
@@ -141,8 +117,7 @@ def findUsefulPg(textList, pages, pinNameList):
             usefulPg.append(pg)
             for j,tb in enumerate(table_img_list):
                 if isChart(tb, component):
-                    cv2.imwrite("tests/ds093/PinChart/"+str(i+1)+"_"+str(j)+".jpg",tb)
-            print(pg.page_number)
+                    cv2.imwrite(os.path.join("pdfProcess","tests",component_name,"PinChart","p"+str(i+1)+"_"+str(j)+".jpg"),tb)
     return usefulPg
 
 def readPinNameFile(fname):

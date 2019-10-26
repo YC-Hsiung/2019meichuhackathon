@@ -8,7 +8,7 @@ def pdf2jpg(fname):
     image = list()
     if(not os.path.isdir(path)):
         os.mkdir(path)
-        image = pdf2image.convert_from_path(fname, 900, fmt="PNG")
+        image = pdf2image.convert_from_path(fname, 900, fmt="JPEG")
     else:
         dirs = os.listdir(path)
         for fname in dirs:
@@ -16,7 +16,8 @@ def pdf2jpg(fname):
         exist = True
 
     for i,pg in enumerate(image):
-        if(not exist):
-            outfile = os.path.join(path,str(i+1)+".png")
-            pg.save(outfile, "PNG")
+        if not exist:
+            outfile = os.path.join(path,str(i+1)+".jpg")
+            pg.save(outfile, "JPEG")
+    return len(image)
 

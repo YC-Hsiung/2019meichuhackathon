@@ -2,6 +2,7 @@ import cv2
 import os
 import pdf2jpg
 from skimage.measure import compare_ssim
+"""
 def choose_chart(componentname,candidates_index):
     ##constants
     convert_width=1500
@@ -34,19 +35,19 @@ def choose_chart(componentname,candidates_index):
         if score>threshold_chart_similarity:
             charts.append(new_candidates[i])
     return charts
-def ReadComponentImg(component_name,candidates_index):
+"""
+def Convert2Jpg(component_name):
     dir_path=os.path.join('tests',component_name,component_name)
     pin_img=cv2.imread(dir_path+".png")
     print("converting to jpg...")
-    pdf2jpg.pdf2jpg(dir_path+".pdf")
+    pg_number = pdf2jpg.pdf2jpg(dir_path+".pdf")
     print("convert completed")
-    candidates=[]
-    for i in candidates_index:
-        candidates.append(cv2.imread(os.path.join(dir_path,str(i+1)+".jpg")))
+    return pin_img
 
-    return (pin_img,candidates)
 if __name__=='__main__':
+    
     charts=choose_chart('TLK2711',range(0,25))
+    charts=choose_chart('42-45S83200G-16160G',range(0,63))
     for img in charts:
         img=cv2.resize(img,(1000,1000))
         cv2.imshow('',img)
