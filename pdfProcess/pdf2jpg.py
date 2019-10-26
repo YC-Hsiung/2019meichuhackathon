@@ -1,13 +1,14 @@
 import os
 from PIL import Image
 import pytesseract as pyt
+import pdf2image
 def pdf2jpg(fname):
     path = fname[:fname.find('.')]
     exist = False
     image = list()
     if(not os.path.isdir(path)):
         os.mkdir(path)
-        image = convert_from_path(fname, 900, fmt="PNG")
+        image = pdf2image.convert_from_path(fname, 900, fmt="PNG")
     else:
         dirs = os.listdir(path)
         for fname in dirs:
@@ -16,6 +17,6 @@ def pdf2jpg(fname):
 
     for i,pg in enumerate(image):
         if(not exist):
-            outfile = path + "/"+fname[:fname.find('.')] + "_" + str(i+1) + ".png"
+            outfile = os.path.join(path,str(i+1)+".png")
             pg.save(outfile, "PNG")
 
