@@ -1,0 +1,8 @@
+(52,31) offset null
+(21,64) inverting input
+(6,112) non-inverting input
+(100,149) -V
+(331,142) offset null
+(327,105) output
+(328,69) +V
+(329,29) not connected
