@@ -14,6 +14,23 @@ gap_x = 100
 gap_y1 = 150
 gap_y2 = 225
 
+class showImg(tk.Toplevel):
+	def __init__(self,parent,name):
+		super().__init__()
+		self.title('Soup Head Saver')
+		self.parent = parent
+		self.geometry("1024x768")
+		n=Image.open(os.path.join("pdfProcess","tests",self.parent.name[:-4],"PinChart",name))
+		w,h=n.size
+		factor=min([1024/w,768/h])
+		n=n.resize((int(factor*w),int(factor*h)), Image.ANTIALIAS)
+		self.img = ImageTk.PhotoImage(n)
+		Label(self,image=self.img).place(x=0,y=0)
+
+	
+		
+
+
 class Yee(tk.Toplevel):
     def __init__(self, parent,name):
         super().__init__()
@@ -26,12 +43,20 @@ class Yee(tk.Toplevel):
 
         self.quitbt = Button(self, text='quit', width=8,command = self.leave)
         self.quitbt.place(x=700,y=300)
-
-
+        self.detailbt = Button(self,text = 'Information',command = self.show_pic)
+        self.detailbt.place(x = 700,y = 160)
         self.name = name
         if name[:-4] in self.parent.favorite:
             self.starbt.config(bg = 'yellow', text = 'stared')
         self.guten(name)
+
+    def show_pic(self):
+        files=os.listdir(os.path.join("pdfProcess","tests",self.name[:-4],"PinChart"))
+        for t in files:
+            showImg(self,t)
+	
+
+
     def leave(self):
         self.destroy()
     def starpressed(self):          

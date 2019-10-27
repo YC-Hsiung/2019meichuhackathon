@@ -22,7 +22,7 @@ def isChart(img,component,component_name):
     clone_gray_component_img=cv2.cvtColor(cv2.resize(component.copy(),(convert_width,convert_height)),cv2.COLOR_BGR2GRAY)
     score1 = compare_ssim(clone_gray_chart_img,clone_gray_img,full=True)[0]
     score2 = compare_ssim(clone_gray_component_img,clone_gray_img,full=True)[0]
-    if score1>threshold_chart_similarity and score2<threshold_component_similarity and len(pyt.image_to_string(img))>=20:
+    if score1>threshold_chart_similarity and score2<threshold_component_similarity and len(pyt.image_to_string(img,config=" -c tessedit_char_whitelist=ABCDEFGHIJKLMNOPQRSTUVWXYZ()/#"))>=30:
         print("probably useful chart detected!")
         return True
     return False
