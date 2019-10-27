@@ -31,8 +31,9 @@ from utils import visualization_utils as vis_util
 
 # Name of the directory containing the object detection module we're using
 MODEL_NAME = 'inference_graph'
-IMAGE_NAME = os.path.join('images','train2.png')
-
+#fpk 3,fpk5 fpk7 fpk9
+#IMAGE_NAME = os.path.join('images',"contest",'FPK_10.jpg')
+#IMAGE_NAME = os.path.join('images','train1.png')
 # Grab path to current working directory
 CWD_PATH = os.getcwd()
 
@@ -44,7 +45,7 @@ PATH_TO_CKPT = os.path.join(CWD_PATH,MODEL_NAME,'frozen_inference_graph.pb')
 PATH_TO_LABELS = os.path.join(CWD_PATH,'training','labelmap.pbtxt')
 
 # Path to image
-PATH_TO_IMAGE = os.path.join(CWD_PATH,IMAGE_NAME)
+#PATH_TO_IMAGE = os.path.join(CWD_PATH,IMAGE_NAME)
 
 # Number of classes the object detector can identify
 NUM_CLASSES = 1
@@ -89,30 +90,31 @@ num_detections = detection_graph.get_tensor_by_name('num_detections:0')
 # Load image using OpenCV and
 # expand image dimensions to have shape: [1, None, None, 3]
 # i.e. a single-column array, where each item in the column has the pixel RGB value
-image = cv2.imread(PATH_TO_IMAGE)
-width=image.shape[0]
-height=image.shape[1]
-image_expanded = np.expand_dims(image, axis=0)
+def run_model(PATH_TO_IMAGE):
+    image = cv2.imread(PATH_TO_IMAGE)
+    width=image.shape[0]
+    height=image.shape[1]
+    image_expanded = np.expand_dims(image, axis=0)
 
 # Perform the actual detection by running the model with the image as input
-(boxes, scores, classes, num) = sess.run(
+    (boxes, scores, classes, num) = sess.run(
     [detection_boxes, detection_scores, detection_classes, num_detections],
     feed_dict={image_tensor: image_expanded})
 
 # Draw the results of the detection (aka 'visulaize the results')
-clone=image.copy()
-for i in range(0,int(num[0])):
-    if scores[0][i]>0.6:
-        cv2.rectangle(clone,(int(boxes[0][i][1]*height),int(boxes[0][i][0]*width)),(int(boxes[0][i][3]*height),int(boxes[0][i][2]*width)),(0,255,0),5)
-cv2.imshow("",clone)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-
-import pytesseract
-for i in range(0,int(num[0])):
-    if scores[0][i]>0.6:
-        configure = "-psm 9"
-#        cv2.imshow("",clone[int(boxes[0][i][0]*width):(int(boxes[0][i][2]*width)),int(boxes[0][i][1]*height):int(boxes[0][i][3]*height)])
-#        cv2.waitKey(0)
- #       cv2.destroyAllWindows()
+    clone=image.copy()
+    import pytesseract
+    toOCR=[]
+    for i in range(0,int(num[0])):
+        if scores[0][i]>0.4:
+            cv2.rectangle(clone,(int(boxes[0][i][1]*height),int(boxes[0][i][0]*width)),(int(boxes[0][i][3]*height),int(boxes[0][i][2]*width)),(0,255,0),5)
+            toOCR.append(i)
+    cv2.imshow("",cv2.resize(clone,(600,600)))
+    configure = "-psm 8"
+    cv2.waitKey(0)
+    for i in toOCR:
         print(pytesseract.image_to_string(clone[int(boxes[0][i][0]*width):(int(boxes[0][i][2]*width)),int(boxes[0][i][1]*height):int(boxes[0][i][3]*height)],config = configure ))
+    cv2.destroyAllWindows()
+
+for path in [3,5,7]:
+    run_model(os.path.join("images","contest","FPK_0"+str(path)+".jpg"))
